@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 11:01:49 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/06 17:38:23 by fkao             ###   ########.fr       */
+/*   Updated: 2017/09/08 16:52:17 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,17 +38,44 @@ void	fill_qoutes(t_echo *ret)
 	}
 }
 
+void	echo_env(t_echo *ret, t_list *lstenv)
+{
+	char	*buf;
+	char	*tmp;
+	char	*env;
+
+	if (*ret->buf == '$')
+	{
+		buf = ft_strdup(++ret->buf);
+		tmp = buf;
+		while (!ft_isspace(*ret->buf))
+		{
+			tmp++;
+			ret->buf++;
+		}
+		*tmp = '\0';
+		env = ft_strjoin(buf, "=");
+		if ((tmp = get_envar(lstenv, env)))
+			while (*tmp)
+			{
+				*(ret->ptr++) = *tmp++;
+			}
+		free(buf);
+		free(env);
+	}
+}
+
 void	check_space(t_echo *ret)
 {
-	if (*ret->buf == ' ' && !ret->quote)
+	if ((*ret->buf == ' ' || *ret->buf == '\t') && !ret->quote)
 	{
 		*(ret->ptr)++ = ' ';
-		while (*ret->buf == ' ')
+		while (*ret->buf == ' ' || *ret->buf == '\t')
 			ret->buf++;
 	}
 }
 
-void	check_quote(char *buf)
+void	check_quote(char *buf, t_list *lstenv)
 {
 	t_echo	*ret;
 
@@ -57,11 +84,12 @@ void	check_quote(char *buf)
 	ret->buf = buf;
 	ret->new = ft_strnew(BUF_SIZE);
 	ret->ptr = ret->new;
-	while (*ret->buf == ' ')
+	while (*ret->buf == ' ' || *ret->buf == '\t')
 		ret->buf++;
 	while (*ret->buf)
 	{
 		check_space(ret);
+		echo_env(ret, lstenv);
 		fill_qoutes(ret);
 		if (ret->quote && !*ret->buf)
 		{

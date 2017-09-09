@@ -6,28 +6,21 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/01 10:35:10 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/06 15:04:56 by fkao             ###   ########.fr       */
+/*   Updated: 2017/09/08 16:30:40 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**get_path(char **env)
+char	**get_path(t_list *lstenv)
 {
 	char	**path;
 	char	**ptr;
 	char	*tmp;
 
-	path = 0;
-	while (*env)
-	{
-		if (ft_strnequ(*env, "PATH=", 5))
-		{
-			path = ft_strsplit(*env + 5, ':');
-			break ;
-		}
-		env++;
-	}
+	if (!(tmp = get_envar(lstenv, "PATH=")))
+		return (NULL);
+	path = ft_strsplit(tmp, ':');
 	ptr = path;
 	while (*ptr)
 	{

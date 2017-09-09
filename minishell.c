@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/30 15:16:27 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/06 17:59:34 by fkao             ###   ########.fr       */
+/*   Updated: 2017/09/08 16:45:31 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,26 +30,25 @@ int		bin_command(char **av, t_list *lstenv)
 	char	**env;
 	char	**path;
 	char	*tmp;
-	int		status;
 
 	pid = fork();
 	if (pid == 0)
 	{
 		env = list_2dar(lstenv);
-		path = get_path(env);
-		while (*path)
-		{
-			tmp = ft_strjoin(*path, av[0]);
-			if (execve(tmp, av, env) == -1)
+		(av[0][0] == '/') ? execve(av[0], av, env) : 0;
+		if ((path = get_path(lstenv)))
+			while (*path)
 			{
-				free(tmp);
-				path++;
+				tmp = ft_strjoin(*path, av[0]);
+				if (execve(tmp, av, env) == -1)
+				{
+					free(tmp);
+					path++;
+				}
 			}
-		}
-		if (!*path)
-			return (0);
+		return (0);
 	}
-	wait(&status);
+	wait(&pid);
 	return (1);
 }
 
@@ -58,13 +57,13 @@ void	parse_command(char *buf, t_list **lstenv)
 	int		ac;
 	char	**av;
 
-	if (*buf == '\n')
-		return ;
 	buf[ft_strlen(buf) - 1] = '\0';
-	ac = ft_countstr(buf, ' ');
-	av = ft_strsplit(buf, ' ');
+	ac = ms_countstr(buf);
+	av = split_whitespace(buf);
 	if (ft_strequ(av[0], "echo"))
-		check_quote(buf + 5);
+		check_quote(buf + 5, *lstenv);
+	else if (ft_strequ(av[0], "env"))
+		ms_print_env(*lstenv);
 	else if (ft_strequ(av[0], "setenv"))
 		ms_env_func(ac, av, lstenv);
 	else if (ft_strequ(av[0], "unsetenv"))
@@ -97,8 +96,6 @@ void	minishell(t_list *lstenv)
 		read(0, buf, BUF_SIZE);
 		if (ft_strequ(buf, "exit\n"))
 			break ;
-		else if (ft_strequ(buf, "env\n"))
-			ms_print_env(lstenv);
 		else
 			parse_command(buf, &lstenv);
 	}

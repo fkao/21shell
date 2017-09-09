@@ -7,7 +7,8 @@ SFILE	= minishell.c \
 			ms_init_shell.c \
 			ms_echo.c \
 			ms_set_env.c \
-			ms_change_dir.c
+			ms_change_dir.c \
+			ms_split_whitespace.c
 
 SRC		= $(addprefix $(SDIR), $(SFILE))
 SDIR	= ./

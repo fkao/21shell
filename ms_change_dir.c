@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 14:10:46 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/08 09:53:01 by fkao             ###   ########.fr       */
+/*   Updated: 2017/09/08 13:52:38 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,23 +48,19 @@ char	*parse_cd_3(char **av, char *old_path)
 	return (new);
 }
 
-char	*parse_cd_2(char **av, t_list *lstenv, char *old_path)
+char	*parse_cd_2(char **av, t_list *lstenv)
 {
 	char	*new;
 	char	*tmp;
 
 	if (ft_strequ(av[1], "-") && (tmp = get_envar(lstenv, "OLDPWD=")))
 		new = ft_strdup(tmp);
-	else if (ft_strequ(av[1], "~") && (tmp = get_envar(lstenv, "HOME=")))
-		new = ft_strdup(tmp);
+	else if (av[1][0] == '~' && (tmp = get_envar(lstenv, "HOME=")))
+		new = ft_strjoin(tmp, av[1] + 1);
 	else if (ft_strequ(av[1], "/"))
 		new = ft_strdup(av[1]);
 	else
-	{
-		tmp = ft_strjoin(old_path, "/");
-		new = ft_strjoin(tmp, av[1]);
-		free(tmp);
-	}
+		new = ft_strdup(av[1]);
 	return (new);
 }
 
@@ -79,7 +75,7 @@ char	*parse_cd(int ac, char **av, t_list *lstenv, char *old_path)
 		new = (tmp) ? ft_strdup(tmp) : ft_strdup("/");
 	}
 	else if (ac == 2)
-		new = parse_cd_2(av, lstenv, old_path);
+		new = parse_cd_2(av, lstenv);
 	else if (ac == 3)
 		new = parse_cd_3(av, old_path);
 	else
