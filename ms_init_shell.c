@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/01 10:35:10 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/08 16:30:40 by fkao             ###   ########.fr       */
+/*   Updated: 2017/09/11 11:37:35 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,4 +68,14 @@ t_list	*init_env(char **extenv)
 	}
 	ft_lstrev(&lstenv);
 	return (lstenv);
+}
+
+void	ms_put_prompt(void)
+{
+	char	cwd[PATH_MAX];
+
+	getcwd(cwd, PATH_MAX);
+	write(1, GRN, 5);
+	write(1, cwd, ft_strlen(cwd));
+	write(1, "> " RESET, 7);
 }

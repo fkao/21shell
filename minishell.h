@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 17:44:42 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/08 16:23:25 by fkao             ###   ########.fr       */
+/*   Updated: 2017/09/11 12:03:44 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct	s_echo
 }				t_echo;
 
 void			minishell(t_list *lstenv);
+void			ms_put_prompt(void);
 int				ms_countstr(char *input);
 char			**split_whitespace(char *input);
 t_list			*init_env(char **extenv);
@@ -45,4 +46,6 @@ void			ms_env_func(int ac, char **av, t_list **lstenv);
 void			ms_change_dir(int ac, char **av, t_list **lstenv);
 void			set_env(char *name, char *var, t_list **lstenv);
 char			*get_envar(t_list *lst, char *str);
+void			permission_denied(char *str);
+void			command_not_found(char *str);
 #endif
