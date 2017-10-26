@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 14:10:46 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/11 11:00:41 by fkao             ###   ########.fr       */
+/*   Updated: 2017/10/25 17:30:49 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,10 @@ void	ms_change_dir(int ac, char **av, t_list **lstenv)
 		return ;
 	if (chdir(new))
 	{
-		write(2, RED "cd: no such file or directory: ", 36);
-		(ac == 2) ? write(2, av[1], ft_strlen(av[1])) :
-		write(2, new, ft_strlen(new));
-		write(2, "\n" RESET, 6);
+		if (!access(new, F_OK) && access(new, R_OK))
+			permission_denied(new, 0);
+		else
+			does_not_exist(ac, av[1], new);
 		free(new);
 		return ;
 	}

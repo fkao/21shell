@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 17:44:42 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/11 12:03:44 by fkao             ###   ########.fr       */
+/*   Updated: 2017/10/25 17:27:45 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <sys/wait.h>
 # include <signal.h>
 # include <limits.h>
+# include <signal.h>
 # define BUF_SIZE 4096
 # define RED	"\x1B[31m"
 # define GRN	"\x1B[32m"
@@ -37,7 +38,7 @@ void			minishell(t_list *lstenv);
 void			ms_put_prompt(void);
 int				ms_countstr(char *input);
 char			**split_whitespace(char *input);
-t_list			*init_env(char **extenv);
+t_list			*init_env(void);
 char			**list_2dar(t_list *lstenv);
 char			**get_path(t_list *lstenv);
 void			check_quote(char *buf, t_list *lstenv);
@@ -46,6 +47,8 @@ void			ms_env_func(int ac, char **av, t_list **lstenv);
 void			ms_change_dir(int ac, char **av, t_list **lstenv);
 void			set_env(char *name, char *var, t_list **lstenv);
 char			*get_envar(t_list *lst, char *str);
-void			permission_denied(char *str);
 void			command_not_found(char *str);
+void			permission_denied(char *str, int x_it);
+void			does_not_exist(int ac, char *str1, char *str2);
+void			signal_handler(int signo);
 #endif

@@ -9,8 +9,9 @@ SFILE	= minishell.c \
 			ms_set_env.c \
 			ms_change_dir.c \
 			ms_split_whitespace.c \
-			ms_error.c
-
+			ms_error.c \
+			ms_signals.c
+			
 SRC		= $(addprefix $(SDIR), $(SFILE))
 SDIR	= ./
 

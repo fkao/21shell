@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/30 15:16:27 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/11 12:05:08 by fkao             ###   ########.fr       */
+/*   Updated: 2017/10/25 17:27:18 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,20 +36,20 @@ int		bin_command(char **av, t_list *lstenv)
 	{
 		env = list_2dar(lstenv);
 		(av[0][0] == '/' && execve(av[0], av, env) == -1 && !access(tmp, F_OK)
-			&& access(tmp, X_OK)) ? permission_denied(av[0]) : 0;
+			&& access(tmp, X_OK)) ? permission_denied(av[0], 1) : 0;
 		if ((path = get_path(lstenv)))
 			while (*path)
 			{
 				tmp = ft_strjoin(*path, av[0]);
 				if (execve(tmp, av, env) == -1 && !access(tmp, F_OK) &&
 					access(tmp, X_OK))
-					permission_denied(tmp);
+					permission_denied(tmp, 1);
 				free(tmp);
 				path++;
 			}
 		return (0);
 	}
-	wait(&pid);
+	wait(0);
 	return (1);
 }
 
@@ -90,7 +90,9 @@ void	minishell(t_list *lstenv)
 		ms_put_prompt();
 		ft_bzero((void*)buf, BUF_SIZE);
 		read(0, buf, BUF_SIZE);
-		if (ft_strequ(buf, "exit\n"))
+		if (ft_strequ(buf, "\n"))
+			continue ;
+		else if (ft_strequ(buf, "exit\n"))
 			break ;
 		else if (ft_strchr(buf, ';') && (av = ft_strsplit(buf, ';')))
 		{
@@ -105,13 +107,12 @@ void	minishell(t_list *lstenv)
 	free(buf);
 }
 
-int		main(int ac, char **av, char **extenv)
+int		main(void)
 {
 	t_list	*lstenv;
 
-	(void)ac;
-	(void)av;
-	lstenv = init_env(extenv);
+	lstenv = init_env();
+	signal(SIGINT, signal_handler);
 	minishell(lstenv);
 	return (0);
 }

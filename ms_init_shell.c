@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/01 10:35:10 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/11 11:37:35 by fkao             ###   ########.fr       */
+/*   Updated: 2017/10/25 13:21:57 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,15 +56,16 @@ char	**list_2dar(t_list *lstenv)
 	return (env);
 }
 
-t_list	*init_env(char **extenv)
+t_list	*init_env(void)
 {
-	t_list	*lstenv;
+	extern char	**environ;
+	t_list		*lstenv;
 
 	lstenv = NULL;
-	while (*extenv)
+	while (*environ)
 	{
-		ft_lstadd(&lstenv, ft_lstnew(*extenv, ft_strlen(*extenv) + 1));
-		extenv++;
+		ft_lstadd(&lstenv, ft_lstnew(*environ, ft_strlen(*environ) + 1));
+		environ++;
 	}
 	ft_lstrev(&lstenv);
 	return (lstenv);
