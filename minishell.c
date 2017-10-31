@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/30 15:16:27 by fkao              #+#    #+#             */
-/*   Updated: 2017/10/25 17:27:18 by fkao             ###   ########.fr       */
+/*   Updated: 2017/10/31 13:45:08 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,12 @@ void	minishell(t_list *lstenv)
 	char	**av;
 	char	**tmp;
 
-	buf = malloc(sizeof(char) * BUF_SIZE);
+	buf = ft_memalloc(sizeof(char) * BUF_SIZE);
 	while (1)
 	{
 		ms_put_prompt();
 		ft_bzero((void*)buf, BUF_SIZE);
-		read(0, buf, BUF_SIZE);
+		grab_commands(buf);
 		if (ft_strequ(buf, "\n"))
 			continue ;
 		else if (ft_strequ(buf, "exit\n"))
@@ -109,9 +109,15 @@ void	minishell(t_list *lstenv)
 
 int		main(void)
 {
-	t_list	*lstenv;
+	t_list			*lstenv;
+	struct termios	term;
 
+	if ((tgetent(NULL, getenv("TERM")) < 1))
+		return (0);
 	lstenv = init_env();
+	tcgetattr(0, &term);
+	term.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(0, TCSANOW, &term);
 	signal(SIGINT, signal_handler);
 	minishell(lstenv);
 	return (0);

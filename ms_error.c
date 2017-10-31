@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/11 10:53:02 by fkao              #+#    #+#             */
-/*   Updated: 2017/10/25 17:26:40 by fkao             ###   ########.fr       */
+/*   Updated: 2017/10/31 12:32:05 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,15 @@ void	does_not_exist(int ac, char *str1, char *str2)
 	write(2, "\n" RESET, 6);
 }
 
-void	permission_denied(char *str, int x_it)
+void	permission_denied(char *str, int iscmd)
 {
-	write(2, RED "minishell: permission denied: ", 35);
+	if (iscmd)
+		write(2, RED "minishell: permission denied: ", 35);
+	else
+		write(2, RED "cd: permission denied: ", 28);
 	write(2, str, ft_strlen(str));
 	write(2, "\n" RESET, 6);
-	if (x_it)
+	if (iscmd)
 		exit(1);
 }
 

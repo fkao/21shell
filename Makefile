@@ -1,7 +1,7 @@
 NAME	= minishell
 
 INCL	= -I./libft/includes \
-			-I ft_ls.h
+			-I minishell.h
 
 SFILE	= minishell.c \
 			ms_init_shell.c \
@@ -10,14 +10,16 @@ SFILE	= minishell.c \
 			ms_change_dir.c \
 			ms_split_whitespace.c \
 			ms_error.c \
-			ms_signals.c
-			
+			ms_signals.c \
+			ms_terminal.c
+
 SRC		= $(addprefix $(SDIR), $(SFILE))
 SDIR	= ./
 
 LFILE	= ./libft/libft.a
 LIB		= -L./libft -lft
 LDIR	= ./libft/
+LTERM	= -ltermcap
 
 OFILE	= $(SRC:.c=.o)
 OBJ		= $(addprefix $(ODIR), $(OFILE))
@@ -36,9 +38,11 @@ $(LFILE):
 $(ODIR)%.o: %.c
 	@mkdir -p $(ODIR)
 	@$(CC) -c $(FLAG) $(INCL) -c $< -o $@
+	@echo -n █
 
 $(NAME): $(OBJ)
-	@$(CC) -o $(NAME) $(OBJ) $(LIB)
+	@$(CC) -o $(NAME) $(OBJ) $(LIB) $(LTERM)
+	@echo █
 
 clean:
 	@$(MC) $(LDIR) clean
