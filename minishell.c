@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/30 15:16:27 by fkao              #+#    #+#             */
-/*   Updated: 2017/10/31 13:45:08 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/03 14:50:40 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,15 @@ void	parse_command(char *buf, t_list **lstenv)
 {
 	int		ac;
 	char	**av;
-	char	*tmp;
 
-	if ((tmp = ft_strchr(buf, '\n')))
-		*tmp = '\0';
+	while (ft_isspace(*buf))
+		buf++;
 	ac = ms_countstr(buf);
 	av = split_whitespace(buf);
+	if (ft_strequ(buf, "exit"))
+		exit(0);
 	if (ft_strequ(av[0], "echo"))
-		check_quote(buf + 5, *lstenv);
+		ms_echo(buf + 5, *lstenv);
 	else if (ft_strequ(av[0], "env"))
 		ms_print_env(*lstenv);
 	else if (ft_strequ(av[0], "setenv"))
@@ -84,16 +85,14 @@ void	minishell(t_list *lstenv)
 	char	**av;
 	char	**tmp;
 
-	buf = ft_memalloc(sizeof(char) * BUF_SIZE);
 	while (1)
 	{
 		ms_put_prompt();
-		ft_bzero((void*)buf, BUF_SIZE);
+		buf = get_cmd_buf();
 		grab_commands(buf);
-		if (ft_strequ(buf, "\n"))
+		store_command(buf);
+		if (!*buf)
 			continue ;
-		else if (ft_strequ(buf, "exit\n"))
-			break ;
 		else if (ft_strchr(buf, ';') && (av = ft_strsplit(buf, ';')))
 		{
 			tmp = av;
