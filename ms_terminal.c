@@ -6,78 +6,88 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/26 15:03:50 by fkao              #+#    #+#             */
-/*   Updated: 2017/10/31 12:13:58 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/22 12:58:04 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "my_shell.h"
 
-unsigned long	g_cur = 0;
+t_hist			*g_hist;
 
-void	move_cursor(int key, char *buf)
+void		store_command(char *buf)
 {
-	if (key == LEFT && g_cur > 0)
+	t_hist	*new;
+
+	if (*buf)
 	{
-		MV_LEFT;
-		g_cur--;
+		new = (t_hist*)malloc(sizeof(*new));
+		new->cmd = ft_strdup(buf);
+		new->next = g_hist;
+		new->prev = NULL;
+		if (g_hist != NULL)
+			g_hist->prev = new;
+		g_hist = new;
 	}
-	if (key == RIGHT && g_cur < (ft_strlen(buf)))
+}
+
+static void	put_history(char *buf, t_hist *hist, t_post *post)
+{
+	size_t	i;
+
+	i = 0;
+	if (*buf)
 	{
-		MV_RIGHT;
-		g_cur++;
+		if (post->curs)
+			ft_printf("\033[%dD", post->curs);
+		tputs(tgetstr("ce", NULL), 1, int_putchar);
+	}
+	ft_bzero((void*)buf, BUF_SIZE);
+	ft_strcpy(buf, hist->cmd);
+	post->curs = ft_strlen(buf);
+	ft_putstr(buf);
+}
+
+static void	term_history(int key, char *buf, t_hist **hist, t_post *post)
+{
+	if (key == UP && (*hist))
+	{
+		if ((*hist)->next && !post->hist)
+			(*hist) = (*hist)->next;
+		put_history(buf, *hist, post);
+		post->hist = 0;
+	}
+	if (key == DOWN && (*hist))
+	{
+		if ((*hist)->prev)
+			(*hist) = (*hist)->prev;
+		put_history(buf, *hist, post);
 	}
 }
 
-void	edit_delete(char *buf)
+void		grab_commands(char *buf)
 {
-	char	*cur_pos;
-	char	*back;
+	char	*input;
+	t_hist	*hist;
+	t_post	post;
 
-	cur_pos = buf + g_cur;
-	back = ft_strdup(cur_pos);
-	g_cur--;
-	*(buf + g_cur) = '\0';
-	MV_LEFT;
-	ft_putstr(tgetstr("dc", NULL));
-	if (*back)
-		ft_strcat(buf, back);
-	free(back);
-}
-
-void	edit_insert(char *buf, char *key)
-{
-	char	*tmp;
-
-	tmp = ft_strjoin(key, buf + g_cur);
-	*(buf + g_cur) = '\0';
-	ft_strcat(buf, tmp);
-	ft_putstr(tgetstr("im", NULL));
-	ft_putstr(key);
-	ft_putstr(tgetstr("ei", NULL));
-	g_cur++;
-}
-
-void	grab_commands(char *buf)
-{
-	char	*key;
-
-	key = ft_strnew(5);
-	while (read(0, key, 5))
+	hist = g_hist;
+	post.curs = 0;
+	post.hist = 1;
+	input = ft_strnew(5);
+	while (read(0, input, 5) && input[0] != ENTER)
 	{
-		if (ft_isprint(key[0]) && ft_strlen(key) == 1)
-			edit_insert(buf, key);
-		if (key[0] == ENTER)
+		if (ft_isprint(input[0]))
+			edit_insert(buf, input, &post);
+		if (input[0] == DELETE && post.curs)
+			edit_delete(buf, &post);
+		if (input[0] == 27)
 		{
-			ft_strcat(buf, "\n");
-			write(1, "\n", 1);
-			g_cur = 0;
-			free(key);
-			break ;
+			move_cursor(input[2], buf, &post);
+			(input[2] == UP || input[2] == DOWN) ?
+				term_history(input[2], buf, &hist, &post) : 0;
 		}
-		if (key[0] == DELETE && g_cur)
-			edit_delete(buf);
-		if (key[0] == 27)
-			(key[2] == LEFT || key[2] == RIGHT) ? move_cursor(key[2], buf) : 0 ;
-		ft_bzero((void*)key, 5);
+		ft_bzero((void*)input, 5);
 	}
+	write(1, "\n", 1);
+	free(input);
 }

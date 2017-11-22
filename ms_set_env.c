@@ -6,19 +6,19 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 16:24:00 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/08 10:03:24 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/20 10:46:51 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "my_shell.h"
 
-void	del_node(void *content, size_t content_size)
+static void	del_node(void *content, size_t content_size)
 {
 	free(content);
 	(void)content_size;
 }
 
-void	unset_env(char *name, t_list **lstenv)
+static void	unset_env(char *name, t_list **lstenv)
 {
 	t_list	*here;
 	t_list	*trail;
@@ -43,7 +43,7 @@ void	unset_env(char *name, t_list **lstenv)
 	free(fname);
 }
 
-void	set_env(char *name, char *var, t_list **lstenv)
+void		set_env(char *name, char *var, t_list **lstenv)
 {
 	char	*fname;
 	char	*newvar;
@@ -72,7 +72,7 @@ void	set_env(char *name, char *var, t_list **lstenv)
 	free(fname);
 }
 
-void	ms_env_func(int ac, char **av, t_list **lstenv)
+void		ms_env_func(int ac, char **av, t_list **lstenv)
 {
 	if (ft_strequ(av[0], "setenv"))
 	{
@@ -97,7 +97,7 @@ void	ms_env_func(int ac, char **av, t_list **lstenv)
 	}
 }
 
-void	ms_print_env(t_list *lstenv)
+void		ms_print_env(t_list *lstenv)
 {
 	while (lstenv)
 	{

@@ -6,13 +6,13 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 14:10:46 by fkao              #+#    #+#             */
-/*   Updated: 2017/10/25 17:30:49 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/20 10:46:26 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "my_shell.h"
 
-char	*get_envar(t_list *lst, char *str)
+char		*get_envar(t_list *lst, char *str)
 {
 	while (lst)
 	{
@@ -23,7 +23,7 @@ char	*get_envar(t_list *lst, char *str)
 	return (NULL);
 }
 
-char	*parse_cd_3(char **av, char *old_path)
+static char	*parse_cd_3(char **av, char *old_path)
 {
 	char	*old;
 	char	*new;
@@ -48,7 +48,7 @@ char	*parse_cd_3(char **av, char *old_path)
 	return (new);
 }
 
-char	*parse_cd_2(char **av, t_list *lstenv)
+static char	*parse_cd_2(char **av, t_list *lstenv)
 {
 	char	*new;
 	char	*tmp;
@@ -64,7 +64,7 @@ char	*parse_cd_2(char **av, t_list *lstenv)
 	return (new);
 }
 
-char	*parse_cd(int ac, char **av, t_list *lstenv, char *old_path)
+static char	*parse_cd(int ac, char **av, t_list *lstenv, char *old_path)
 {
 	char	*new;
 	char	*tmp;
@@ -86,7 +86,7 @@ char	*parse_cd(int ac, char **av, t_list *lstenv, char *old_path)
 	return (new);
 }
 
-void	ms_change_dir(int ac, char **av, t_list **lstenv)
+void		ms_change_dir(int ac, char **av, t_list **lstenv)
 {
 	char	old_path[PATH_MAX];
 	char	path[PATH_MAX];
@@ -97,10 +97,10 @@ void	ms_change_dir(int ac, char **av, t_list **lstenv)
 		return ;
 	if (chdir(new))
 	{
-		if (!access(new, F_OK) && access(new, R_OK))
-			permission_denied(new, 0);
-		else
+		if (access(new, F_OK))
 			does_not_exist(ac, av[1], new);
+		else if (access(new, X_OK))
+			permission_denied("cd", new, 0);
 		free(new);
 		return ;
 	}

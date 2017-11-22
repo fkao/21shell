@@ -1,49 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   my_shell.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/30 15:16:27 by fkao              #+#    #+#             */
-/*   Updated: 2017/11/03 14:50:40 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/22 12:06:08 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "my_shell.h"
 
-void	free_stack(int ac, char **av)
+static void	free_stack(int ac, char **av)
 {
 	int	i;
 
 	i = -1;
 	while (++i < ac)
-	{
 		free(av[i]);
-	}
 	free(av);
 }
 
-int		bin_command(char **av, t_list *lstenv)
+static int	bin_command(char **av, t_list *lstenv)
 {
-	pid_t	pid;
 	char	**env;
 	char	**path;
 	char	*tmp;
 
-	pid = fork();
-	if (pid == 0)
+	if (fork() == 0)
 	{
 		env = list_2dar(lstenv);
-		(av[0][0] == '/' && execve(av[0], av, env) == -1 && !access(tmp, F_OK)
-			&& access(tmp, X_OK)) ? permission_denied(av[0], 1) : 0;
+		if (av[0][0] == '/' && execve(av[0], av, env) == -1
+			&& !access(tmp, F_OK) && access(tmp, X_OK))
+			permission_denied("my_shell", av[0], 1);
 		if ((path = get_path(lstenv)))
 			while (*path)
 			{
 				tmp = ft_strjoin(*path, av[0]);
 				if (execve(tmp, av, env) == -1 && !access(tmp, F_OK) &&
 					access(tmp, X_OK))
-					permission_denied(tmp, 1);
+					permission_denied("my_shell", tmp, 1);
 				free(tmp);
 				path++;
 			}
@@ -53,19 +50,19 @@ int		bin_command(char **av, t_list *lstenv)
 	return (1);
 }
 
-void	parse_command(char *buf, t_list **lstenv)
+static void	parse_command(char *buf, t_list **lstenv)
 {
 	int		ac;
 	char	**av;
 
-	while (ft_isspace(*buf))
-		buf++;
-	ac = ms_countstr(buf);
-	av = split_whitespace(buf);
+	if (!parse_redirect(buf))
+		return ;
+	ac = ft_countstr(buf, ' ');
+	av = ft_strsplit(buf, ' ');
 	if (ft_strequ(buf, "exit"))
 		exit(0);
-	if (ft_strequ(av[0], "echo"))
-		ms_echo(buf + 5, *lstenv);
+	else if (ft_strequ(av[0], "echo"))
+		ms_echo(ft_strstr(buf, "echo") + 5, *lstenv);
 	else if (ft_strequ(av[0], "env"))
 		ms_print_env(*lstenv);
 	else if (ft_strequ(av[0], "setenv"))
@@ -79,14 +76,17 @@ void	parse_command(char *buf, t_list **lstenv)
 	free_stack(ac, av);
 }
 
-void	minishell(t_list *lstenv)
+static void	my_shell(t_list *lstenv)
 {
 	char	*buf;
 	char	**av;
 	char	**tmp;
+	int		stdout;
 
+	stdout = dup(1);
 	while (1)
 	{
+		dup2(stdout, 1);
 		ms_put_prompt();
 		buf = get_cmd_buf();
 		grab_commands(buf);
@@ -106,7 +106,7 @@ void	minishell(t_list *lstenv)
 	free(buf);
 }
 
-int		main(void)
+int			main(void)
 {
 	t_list			*lstenv;
 	struct termios	term;
@@ -118,6 +118,6 @@ int		main(void)
 	term.c_lflag &= ~(ICANON | ECHO);
 	tcsetattr(0, TCSANOW, &term);
 	signal(SIGINT, signal_handler);
-	minishell(lstenv);
+	my_shell(lstenv);
 	return (0);
 }

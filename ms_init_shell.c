@@ -6,11 +6,11 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/01 10:35:10 by fkao              #+#    #+#             */
-/*   Updated: 2017/10/25 13:21:57 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/20 10:46:44 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "my_shell.h"
 
 char	**get_path(t_list *lstenv)
 {

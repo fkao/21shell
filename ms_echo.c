@@ -6,18 +6,18 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 11:01:49 by fkao              #+#    #+#             */
-/*   Updated: 2017/09/11 11:54:13 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/20 10:46:33 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "my_shell.h"
 
-void	fill_qoutes(t_echo *ret)
+static void	fill_qoutes(t_echo *ret)
 {
 	char	*tmp;
 
 	if (*ret->buf != '\'' && *ret->buf != '\"')
-		*(ret->ptr)++ = *(ret->buf++);
+		*(ret->ptr++) = *(ret->buf++);
 	if (*ret->buf == '\'' || *ret->buf == '\"')
 	{
 		if (*ret->buf == ret->quote)
@@ -32,13 +32,13 @@ void	fill_qoutes(t_echo *ret)
 			if (*ret->buf == ret->quote)
 				ret->quote = 0;
 			while (*tmp != *ret->buf)
-				*(ret->ptr++) = *tmp++;
+				*(ret->ptr++) = *(tmp++);
 		}
 		ret->buf++;
 	}
 }
 
-void	echo_env(t_echo *ret, t_list *lstenv)
+static void	echo_env(t_echo *ret, t_list *lstenv)
 {
 	char	*buf;
 	char	*tmp;
@@ -65,27 +65,18 @@ void	echo_env(t_echo *ret, t_list *lstenv)
 	}
 }
 
-void	check_space(t_echo *ret)
+static void	check_space(t_echo *ret)
 {
 	if ((*ret->buf == ' ' || *ret->buf == '\t') && !ret->quote)
 	{
-		*(ret->ptr)++ = ' ';
+		*(ret->ptr++) = ' ';
 		while (*ret->buf == ' ' || *ret->buf == '\t')
 			ret->buf++;
 	}
 }
 
-void	check_quote(char *buf, t_list *lstenv)
+static void	check_quote(t_echo *ret, t_list *lstenv)
 {
-	t_echo	*ret;
-
-	buf[ft_strlen(buf)] = '\n';
-	ret = (t_echo*)ft_memalloc(sizeof(t_echo));
-	ret->buf = buf;
-	ret->new = ft_strnew(BUF_SIZE);
-	ret->ptr = ret->new;
-	while (*ret->buf == ' ' || *ret->buf == '\t')
-		ret->buf++;
 	while (*ret->buf)
 	{
 		check_space(ret);
@@ -95,10 +86,31 @@ void	check_quote(char *buf, t_list *lstenv)
 		{
 			(ret->quote == '\'') ? write(1, YEL "quote> " RESET, 17) :
 			write(1, YEL "dquote> " RESET, 18);
-			read(0, ret->buf, BUF_SIZE);
+			grab_commands(ret->buf);
+			ft_strcat(ret->buf, "\n");
 		}
 	}
-	ft_printf("%s", ret->new);
-	free(ret->new);
-	free(ret);
+}
+
+void		ms_echo(char *buf, t_list *lstenv)
+{
+	static t_echo	ret;
+
+	if (fork() == 0)
+	{
+		signal(SIGINT, signal_exit);
+		ft_bzero((void*)ret.str, BUF_SIZE);
+		ft_bzero((void*)ret.new, BUF_SIZE);
+		ret.quote = 0;
+		ft_strcpy(ret.str, buf);
+		ft_strcat(ret.str, "\n");
+		ret.ptr = ret.new;
+		ret.buf = ret.str;
+		while (*ret.buf == ' ' || *ret.buf == '\t')
+			ret.buf++;
+		check_quote(&ret, lstenv);
+		ft_putstr(ret.new);
+		exit(0);
+	}
+	wait(0);
 }

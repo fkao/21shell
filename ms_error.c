@@ -6,11 +6,11 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/11 10:53:02 by fkao              #+#    #+#             */
-/*   Updated: 2017/10/31 12:32:05 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/20 10:46:40 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "my_shell.h"
 
 void	does_not_exist(int ac, char *str1, char *str2)
 {
@@ -22,21 +22,20 @@ void	does_not_exist(int ac, char *str1, char *str2)
 	write(2, "\n" RESET, 6);
 }
 
-void	permission_denied(char *str, int iscmd)
+void	permission_denied(char *cmd, char *str, int close)
 {
-	if (iscmd)
-		write(2, RED "minishell: permission denied: ", 35);
-	else
-		write(2, RED "cd: permission denied: ", 28);
+	write(2, RED, 5);
+	write(2, cmd, ft_strlen(cmd));
+	write(2, ": permission denied: ", 21);
 	write(2, str, ft_strlen(str));
 	write(2, "\n" RESET, 6);
-	if (iscmd)
+	if (close)
 		exit(1);
 }
 
 void	command_not_found(char *str)
 {
-	write(2, RED "minishell: command not found: ", 35);
+	write(2, RED "my_shell: command not found: ", 35);
 	write(2, str, ft_strlen(str));
 	write(2, "\n" RESET, 6);
 	exit(1);
