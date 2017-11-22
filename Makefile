@@ -1,17 +1,18 @@
-NAME	= minishell
+NAME	= 21sh
 
 INCL	= -I./libft/includes \
-			-I minishell.h
+			-I my_shell.h
 
-SFILE	= minishell.c \
+SFILE	= my_shell.c \
 			ms_init_shell.c \
 			ms_echo.c \
 			ms_set_env.c \
 			ms_change_dir.c \
-			ms_split_whitespace.c \
 			ms_error.c \
 			ms_signals.c \
-			ms_terminal.c
+			ms_terminal.c \
+			ms_edit_cmd.c \
+			ms_redirect.c
 
 SRC		= $(addprefix $(SDIR), $(SFILE))
 SDIR	= ./
