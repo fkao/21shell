@@ -6,7 +6,7 @@
 #    By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/02/27 11:19:09 by fkao              #+#    #+#              #
-#    Updated: 2017/11/03 16:05:58 by fkao             ###   ########.fr        #
+#    Updated: 2017/11/22 12:01:55 by fkao             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ ft_strcat.c ft_strncat.c ft_strlcat.c ft_strchr.c ft_strrchr.c ft_strcmp.c \
 ft_lstnew.c ft_lstdelone.c ft_lstdel.c ft_lstadd.c ft_lstend.c ft_lstiter.c \
 	ft_lstmap.c ft_lstrev.c\
 ft_putchar.c ft_putchar_fd.c ft_putendl.c ft_putendl_fd.c ft_putnbr.c \
-	ft_putnbr_fd.c ft_putstr.c ft_putstr_fd.c \
+	ft_putnbr_fd.c ft_putstr.c ft_putstr_fd.c int_putchar.c\
 get_next_line.c
 SDIR	= ./src/
 

@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/02 11:55:46 by fkao              #+#    #+#             */
-/*   Updated: 2017/08/23 16:10:27 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/22 13:02:01 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ typedef struct		s_list
 
 int					get_next_line(const int fd, char **line);
 int					ft_printf(const char *format, ...);
+
 /*
 **	conversion
 */
@@ -123,4 +124,5 @@ void				ft_putnbr(int n);
 void				ft_putnbr_fd(int n, int fd);
 void				ft_putstr(char const *s);
 void				ft_putstr_fd(char const *s, int fd);
+int					int_putchar(int c);
 #endif
