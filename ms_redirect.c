@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 12:00:08 by fkao              #+#    #+#             */
-/*   Updated: 2017/11/20 10:46:47 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/22 17:15:00 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@ static int	parse_error(char **file)
 	return (0);
 }
 
-static int	redirect_output(char *file)
+static int	redirect_output(char *file, int append)
 {
 	int	fd;
 
 	if (file)
 	{
-		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC,
+		fd = open(file, O_WRONLY | O_CREAT | ((append) ? O_APPEND : O_TRUNC),
 			S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		free(file);
 		if (fd == -1)
@@ -40,28 +40,27 @@ static int	redirect_output(char *file)
 
 int	parse_redirect(char *buf)
 {
-	char	*file;
-	char	*front;
-	char	*back;
-	char	*tmp;
-	int		len;
+	t_rdir	rdir;
 
-	len = 0;
-	file = NULL;
-	if ((front = ft_strchr(buf, '>')))
+	rdir.len = 0;
+	rdir.append = 0;
+	rdir.file = NULL;
+	if ((rdir.front = ft_strchr(buf, '>')))
 	{
-		tmp = front++;
-		while (ft_isspace(*front))
-			front++;
-		while (!ft_isspace(front[len]) && front[len])
-			len++;
-		file = ft_strsub(front, 0, len);
-		back = ft_strdup(front + len);
-		ft_bzero((void*)tmp, ft_strlen(tmp));
-		ft_strcat(buf, back);
-		free(back);
-		if (!*file)
-			return (parse_error(&file));
+		rdir.tmp = rdir.front++;
+		if (*(rdir.front++) == '>')
+			rdir.append = 1;
+		while (ft_isspace(*(rdir.front)))
+			rdir.front++;
+		while (!ft_isspace(rdir.front[rdir.len]) && rdir.front[rdir.len])
+			rdir.len++;
+		rdir.file = ft_strsub(rdir.front, 0, rdir.len);
+		rdir.back = ft_strdup(rdir.front + rdir.len);
+		ft_bzero((void*)rdir.tmp, ft_strlen(rdir.tmp));
+		ft_strcat(buf, rdir.back);
+		free(rdir.back);
+		if (!*(rdir.file))
+			return (parse_error(&rdir.file));
 	}
-	return (redirect_output(file));
+	return (redirect_output(rdir.file, rdir.append));
 }
