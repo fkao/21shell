@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/30 15:16:27 by fkao              #+#    #+#             */
-/*   Updated: 2017/11/22 12:06:08 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/27 16:36:40 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,10 @@ static void	parse_command(char *buf, t_list **lstenv)
 	ac = ft_countstr(buf, ' ');
 	av = ft_strsplit(buf, ' ');
 	if (ft_strequ(buf, "exit"))
+	{
+		CM_EXIT;
 		exit(0);
+	}
 	else if (ft_strequ(av[0], "echo"))
 		ms_echo(ft_strstr(buf, "echo") + 5, *lstenv);
 	else if (ft_strequ(av[0], "env"))
@@ -111,13 +114,14 @@ int			main(void)
 	t_list			*lstenv;
 	struct termios	term;
 
-	if ((tgetent(NULL, getenv("TERM")) < 1))
+	if (tcgetattr(0, &term) == -1 || tgetent(NULL, getenv("TERM")) < 1)
 		return (0);
-	lstenv = init_env();
-	tcgetattr(0, &term);
-	term.c_lflag &= ~(ICANON | ECHO);
+	term.c_lflag &= ~(ECHO | ICANON);
 	tcsetattr(0, TCSANOW, &term);
 	signal(SIGINT, signal_handler);
+	signal(SIGWINCH, signal_handler);
+	lstenv = init_env();
+	ms_init_shell();
 	my_shell(lstenv);
 	return (0);
 }

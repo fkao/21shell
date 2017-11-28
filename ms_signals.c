@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/25 17:18:40 by fkao              #+#    #+#             */
-/*   Updated: 2017/11/20 10:46:54 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/27 15:46:27 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,19 @@ char	*get_cmd_buf(void)
 	return (buffer);
 }
 
+t_wins	get_win_size(int i)
+{
+	static t_wins	win;
+
+	if (i == 1)
+		ioctl(0, TIOCGWINSZ, &win);
+	return (win);
+}
+
 void	signal_handler(int signo)
 {
-	int		status;
-	char	*buf;
+	int				status;
+	char			*buf;
 
 	status = 0;
 	if (signo == SIGINT)
@@ -38,6 +47,8 @@ void	signal_handler(int signo)
 			ms_put_prompt();
 		}
 	}
+	if (signo == SIGWINCH)
+		get_win_size(1);
 }
 
 void	signal_exit(int signo)

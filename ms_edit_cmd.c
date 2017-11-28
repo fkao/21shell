@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/13 13:09:01 by fkao              #+#    #+#             */
-/*   Updated: 2017/11/20 10:46:36 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/27 11:56:23 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,22 @@
 
 void	move_cursor(int key, char *buf, t_post *post)
 {
-	if (key == LEFT && post->curs > 0)
+	if (key == K_LEFT && post->curs > 0)
 	{
 		MV_LEFT;
 		post->curs--;
 	}
-	if (key == RIGHT && post->curs < (ft_strlen(buf)))
+	if (key == K_RIGHT && post->curs < (ft_strlen(buf)))
 	{
 		MV_RIGHT;
 		post->curs++;
 	}
-	if (key == HOME && post->curs > 0)
+	if (key == K_HOME && post->curs > 0)
 	{
 		ft_printf("\033[%dD", post->curs);
 		post->curs = 0;
 	}
-	if (key == END && (post->curs < ft_strlen(buf)))
+	if (key == K_END && (post->curs < ft_strlen(buf)))
 	{
 		ft_printf("\033[%dC", ft_strlen(buf) - post->curs);
 		post->curs = ft_strlen(buf);
@@ -46,7 +46,7 @@ void	edit_delete(char *buf, t_post *post)
 	post->curs--;
 	*(buf + post->curs) = '\0';
 	MV_LEFT;
-	tputs(tgetstr("dc", NULL), 1, int_putchar);
+	DEL_CHAR;
 	if (*back)
 		ft_strcat(buf, back);
 	free(back);
@@ -59,9 +59,9 @@ void	edit_insert(char *buf, char *input, t_post *post)
 	tmp = ft_strjoin(input, buf + post->curs);
 	*(buf + post->curs) = '\0';
 	ft_strcat(buf, tmp);
-	tputs(tgetstr("im", NULL), 1, int_putchar);
+	INS_MODE;
 	ft_putstr(input);
-	tputs(tgetstr("ei", NULL), 1, int_putchar);
+	END_INS;
 	post->curs++;
 	free(tmp);
 }
