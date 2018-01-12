@@ -9,10 +9,15 @@ SFILE	= my_shell.c \
 			ms_set_env.c \
 			ms_change_dir.c \
 			ms_error.c \
+			ms_static_var.c \
 			ms_signals.c \
 			ms_terminal.c \
-			ms_edit_cmd.c \
-			ms_redirect.c
+			ms_cmd_line.c \
+			ms_history.c \
+			ms_cursor.c \
+			ms_redirect.c \
+			ms_quotes.c \
+			ms_commands.c
 
 SRC		= $(addprefix $(SDIR), $(SFILE))
 SDIR	= ./
@@ -38,7 +43,7 @@ $(LFILE):
 
 $(ODIR)%.o: %.c
 	@mkdir -p $(ODIR)
-	@$(CC) -c $(FLAG) $(INCL) -c $< -o $@
+	@$(CC) $(FLAG) $(INCL) -c $< -o $@
 	@echo -n █
 
 $(NAME): $(OBJ)

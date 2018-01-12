@@ -6,17 +6,11 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 16:24:00 by fkao              #+#    #+#             */
-/*   Updated: 2017/11/20 10:46:51 by fkao             ###   ########.fr       */
+/*   Updated: 2017/12/15 15:59:02 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "my_shell.h"
-
-static void	del_node(void *content, size_t content_size)
-{
-	free(content);
-	(void)content_size;
-}
 
 static void	unset_env(char *name, t_list **lstenv)
 {
@@ -78,8 +72,7 @@ void		ms_env_func(int ac, char **av, t_list **lstenv)
 	{
 		if (ac != 3)
 		{
-			write(2, RED "usage: setenv [ENV_VAR] [value1:value2:...]\n" RESET,
-			54);
+			error_message("usage: setenv [ENV_VAR] [value1:value2:...]");
 			return ;
 		}
 		else
@@ -89,7 +82,7 @@ void		ms_env_func(int ac, char **av, t_list **lstenv)
 	{
 		if (ac != 2)
 		{
-			write(2, RED "usage: unsetenv [ENV_VAR]\n" RESET, 36);
+			error_message("usage: unsetenv [ENV_VAR]");
 			return ;
 		}
 		else

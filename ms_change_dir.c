@@ -6,7 +6,7 @@
 /*   By: fkao <fkao@student.42.us.org>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 14:10:46 by fkao              #+#    #+#             */
-/*   Updated: 2017/11/20 10:46:26 by fkao             ###   ########.fr       */
+/*   Updated: 2017/11/29 16:13:34 by fkao             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,7 @@ static char	*parse_cd_3(char **av, char *old_path)
 	if (!(tmp = ft_strstr(old, av[1])))
 	{
 		free(old);
-		write(2, RED "cd: string not in pwd: ", 28);
-		write(2, av[1], ft_strlen(av[1]));
-		write(2, "\n" RESET, 6);
+		str_not_found(av[1]);
 		return (NULL);
 	}
 	*tmp = '\0';
@@ -80,7 +78,7 @@ static char	*parse_cd(int ac, char **av, t_list *lstenv, char *old_path)
 		new = parse_cd_3(av, old_path);
 	else
 	{
-		write(2, RED "cd: too many arguments\n" RESET, 33);
+		error_message("cd: too many arguments");
 		return (NULL);
 	}
 	return (new);
